@@ -30,25 +30,28 @@ public class CreditMapper {
 
         // Gestion de l'héritage
         if (credit instanceof CreditPersonnel) {
-            creditDTO = new CreditPersonnelDTO();
-            BeanUtils.copyProperties(credit, creditDTO);
-            ((CreditPersonnelDTO) creditDTO).setMotif(((CreditPersonnel) credit).getMotif());
+            CreditPersonnelDTO personnelDTO = new CreditPersonnelDTO();
+            BeanUtils.copyProperties(credit, personnelDTO);
+            personnelDTO.setMotif(((CreditPersonnel) credit).getMotif());
+            creditDTO = personnelDTO;
         }
         else if (credit instanceof CreditImmobilier) {
-            creditDTO = new CreditImmobilierDTO();
-            BeanUtils.copyProperties(credit, creditDTO);
-            ((CreditImmobilierDTO) creditDTO).setTypeBien(((CreditImmobilier) credit).getTypeBien());
+            CreditImmobilierDTO immobilierDTO = new CreditImmobilierDTO();
+            BeanUtils.copyProperties(credit, immobilierDTO);
+            immobilierDTO.setTypeBien(((CreditImmobilier) credit).getTypeBien());
+            creditDTO = immobilierDTO;
         }
         else if (credit instanceof CreditProfessionnel) {
-            creditDTO = new CreditProfessionnelDTO();
-            BeanUtils.copyProperties(credit, creditDTO);
-            ((CreditProfessionnelDTO) creditDTO).setMotif(((CreditProfessionnel) credit).getMotif());
-            ((CreditProfessionnelDTO) creditDTO).setRaisonSociale(((CreditProfessionnel) credit).getRaisonSociale());
+            CreditProfessionnelDTO professionnelDTO = new CreditProfessionnelDTO();
+            BeanUtils.copyProperties(credit, professionnelDTO);
+            professionnelDTO.setMotif(((CreditProfessionnel) credit).getMotif());
+            professionnelDTO.setRaisonSociale(((CreditProfessionnel) credit).getRaisonSociale());
+            creditDTO = professionnelDTO;
         }
         else {
-            creditDTO = new CreditDTO();
-            BeanUtils.copyProperties(credit, creditDTO);
+            throw new IllegalArgumentException("Type de crédit non supporté: " + credit.getClass().getName());
         }
+
         if (credit.getClient() != null) {
             creditDTO.setClientId(credit.getClient().getId());
         }
@@ -65,24 +68,26 @@ public class CreditMapper {
 
         // Gestion de l'héritage
         if (creditDTO instanceof CreditPersonnelDTO) {
-            credit = new CreditPersonnel();
-            BeanUtils.copyProperties(creditDTO, credit);
-            ((CreditPersonnel) credit).setMotif(((CreditPersonnelDTO) creditDTO).getMotif());
+            CreditPersonnel personnel = new CreditPersonnel();
+            BeanUtils.copyProperties(creditDTO, personnel);
+            personnel.setMotif(((CreditPersonnelDTO) creditDTO).getMotif());
+            credit = personnel;
         }
         else if (creditDTO instanceof CreditImmobilierDTO) {
-            credit = new CreditImmobilier();
-            BeanUtils.copyProperties(creditDTO, credit);
-            ((CreditImmobilier) credit).setTypeBien(((CreditImmobilierDTO) creditDTO).getTypeBien());
+            CreditImmobilier immobilier = new CreditImmobilier();
+            BeanUtils.copyProperties(creditDTO, immobilier);
+            immobilier.setTypeBien(((CreditImmobilierDTO) creditDTO).getTypeBien());
+            credit = immobilier;
         }
         else if (creditDTO instanceof CreditProfessionnelDTO) {
-            credit = new CreditProfessionnel();
-            BeanUtils.copyProperties(creditDTO, credit);
-            ((CreditProfessionnel) credit).setMotif(((CreditProfessionnelDTO) creditDTO).getMotif());
-            ((CreditProfessionnel) credit).setRaisonSociale(((CreditProfessionnelDTO) creditDTO).getRaisonSociale());
+            CreditProfessionnel professionnel = new CreditProfessionnel();
+            BeanUtils.copyProperties(creditDTO, professionnel);
+            professionnel.setMotif(((CreditProfessionnelDTO) creditDTO).getMotif());
+            professionnel.setRaisonSociale(((CreditProfessionnelDTO) creditDTO).getRaisonSociale());
+            credit = professionnel;
         }
         else {
-            credit = new Credit();
-            BeanUtils.copyProperties(creditDTO, credit);
+            throw new IllegalArgumentException("Type de DTO crédit non supporté: " + creditDTO.getClass().getName());
         }
 
         return credit;
